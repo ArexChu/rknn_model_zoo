@@ -46,9 +46,21 @@ jobs:
           name: rknn-models
           path: examples/PPOCR/*/model/*.rknn
 
-      - name: Upload binary to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: examples/PPOCR/*/model/*.rknn
+      - name: Find and upload files to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_VERSION: ${{ github.ref_name }}
+        run: |
+          PACKAGE_NAME=ppocrv5-rknn-models
+          OWNER=${{ github.repository_owner }}
+          REPO=$(echo "${{ github.repository }}" | cut -d/ -f2)
+          for file in examples/PPOCR/*/model/*.rknn; do
+            [ -f "$file" ] || continue
+            FILENAME=$(basename "$file")
+            echo "Uploading $file as $FILENAME..."
+            curl -u "$OWNER:${GITHUB_TOKEN}" \
+              -X PUT \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary "@$file" \
+              "https://uploads.github.com/repos/$OWNER/$REPO/packages/generic/$PACKAGE_NAME/$PACKAGE_VERSION/$FILENAME"
+          done

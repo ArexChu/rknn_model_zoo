@@ -36,3 +36,10 @@ jobs:
         with:
           name: rknn-rk3588-aarch64-ppocr-system
           path: install/**
+
+      - name: Upload binary to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: install/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
