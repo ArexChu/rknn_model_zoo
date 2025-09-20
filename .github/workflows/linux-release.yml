@@ -1,0 +1,38 @@
+name: Linux Release
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+-[0-9]+'
+
+jobs:
+  build-rk3588-arm64:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu
+
+      - name: Set GCC compiler
+        run: echo "GCC_COMPILER=aarch64-linux-gnu" >> $GITHUB_ENV
+
+      - name: Build PPOCR-System
+        run: |
+          chmod +x ./build.sh
+          ./build.sh -t rk3588 -a aarch64 -d PPOCR-System
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rknn-rk3588-aarch64-ppocr-system
+          path: install/**
