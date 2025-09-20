@@ -36,3 +36,15 @@ jobs:
         with:
           name: rknn-rk3588-aarch64-ppocr-system
           path: install/**
+
+      - name: Compress ppocr system
+        run: |
+          cd install/rk3588_linux_aarch64/rknn_PPOCR-System_demo
+          tar -czvf ../../../ppocr-system.tar.gz ./*
+
+      - name: Upload binary to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ppocr-system.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
