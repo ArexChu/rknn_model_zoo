@@ -29,16 +29,16 @@ jobs:
         run: |
           mkdir -p examples/PPOCR/PPOCR-Det/model
           mkdir -p examples/PPOCR/PPOCR-Rec/model
-          wget -O examples/PPOCR/PPOCR-Det/model/ppocrv5_det.onnx https://github.com/ArexChu/PaddleOCR/releases/download/v5.3/ppocrv5_det.onnx
-          wget -O examples/PPOCR/PPOCR-Rec/model/ppocrv5_rec.onnx https://github.com/ArexChu/PaddleOCR/releases/download/v5.3/ppocrv5_rec.onnx
+          wget -O examples/PPOCR/PPOCR-Det/model/ppocrv5_det.onnx https://github.com/ArexChu/PaddleOCR/releases/download/v5.3/det.onnx
+          wget -O examples/PPOCR/PPOCR-Rec/model/ppocrv5_rec.onnx https://github.com/ArexChu/PaddleOCR/releases/download/v5.3/rec.onnx
 
       - name: Convert PPOCR-Det
         working-directory: examples/PPOCR/PPOCR-Det/python
-        run: python convert.py ../model/ppocrv5_det.onnx rk3588
+        run: python convert.py ../model/ppocrv5_det.onnx rk3588 i8
 
       - name: Convert PPOCR-Rec
         working-directory: examples/PPOCR/PPOCR-Rec/python
-        run: python convert.py ../model/ppocrv5_rec.onnx rk3588
+        run: python convert.py ../model/ppocrv5_rec.onnx rk3588 fp
 
       - name: Upload converted models
         uses: actions/upload-artifact@v4
