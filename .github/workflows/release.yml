@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  rknn-convert:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          wget https://github.com/airockchip/rknn-toolkit2/raw/master/rknn-toolkit2/packages/x86_64/rknn_toolkit2-2.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+          pip install rknn_toolkit2-2.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+          pip install onnx==1.13.1
+
+      - name: Download ONNX models
+        run: |
+          mkdir -p examples/PPOCR/PPOCR-Det/model
+          mkdir -p examples/PPOCR/PPOCR-Rec/model
+          wget -O examples/PPOCR/PPOCR-Det/model/ppocrv5_det.onnx https://github.com/ArexChu/PaddleOCR/releases/download/v5.3/ppocrv5_det.onnx
+          wget -O examples/PPOCR/PPOCR-Rec/model/ppocrv5_rec.onnx https://github.com/ArexChu/PaddleOCR/releases/download/v5.3/ppocrv5_rec.onnx
+
+      - name: Convert PPOCR-Det
+        working-directory: examples/PPOCR/PPOCR-Det/python
+        run: python convert.py ../model/ppocrv5_det.onnx rk3588
+
+      - name: Convert PPOCR-Rec
+        working-directory: examples/PPOCR/PPOCR-Rec/python
+        run: python convert.py ../model/ppocrv5_rec.onnx rk3588
+
+      - name: Upload converted models
+        uses: actions/upload-artifact@v4
+        with:
+          name: rknn-models
+          path: examples/PPOCR/*/model/*.rknn
+
+      - name: Upload binary to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: examples/PPOCR/*/model/*.rknn
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
