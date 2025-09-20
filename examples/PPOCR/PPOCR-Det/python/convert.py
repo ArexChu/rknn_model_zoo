@@ -15,7 +15,7 @@ import sys
 from rknn.api import RKNN
 
 DATASET_PATH = '../../../../datasets/PPOCR/imgs/dataset_20.txt'
-DEFAULT_RKNN_PATH = '../model/ppocrv4_det.rknn'
+DEFAULT_RKNN_PATH = '../model/ppocrv5_det.rknn'
 DEFAULT_QUANT = True
 
 def parse_arg():

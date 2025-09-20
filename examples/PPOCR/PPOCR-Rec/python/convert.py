@@ -14,7 +14,7 @@
 import sys
 from rknn.api import RKNN
 
-DEFAULT_RKNN_PATH = '../model/ppocrv4_rec.rknn'
+DEFAULT_RKNN_PATH = '../model/ppocrv5_rec.rknn'
 DEFAULT_QUANT = False
 RKNPU1_PLATFORM = ['rk1808', 'rv1109', 'rv1126']
 
